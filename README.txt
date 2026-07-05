@@ -1,12 +1,10 @@
-Stratégie Soccer 7 - PWA v2.1 iPad paysage
+Stratégie Soccer 7 - PWA v2.2
 
-Correction :
-- interface optimisée pour iPad en mode horizontal
-- terrain mieux ajusté à l'écran
-- panneaux plus compacts
-- hauteur Safari mieux gérée avec 100dvh
+Nouveautés :
+- zoom du terrain avec les doigts sur iPad
+- boutons Zoom + / Zoom - / Zoom normal
+- bouton Effacer flèches
+- panneaux plus compacts en mode horizontal
 
 Conseil :
-Sur iPad, ouvre le site dans Safari puis fais :
-Partager > Ajouter à l'écran d'accueil
-pour avoir le plein écran.
+Sur iPad, ajoute le site à l'écran d'accueil pour avoir plus de place.

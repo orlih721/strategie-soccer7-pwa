@@ -37,6 +37,8 @@ function App() {
   const [drawing, setDrawing] = useState(null);
   const [arrowKind, setArrowKind] = useState({ color:"#FFD400", style:"course" });
   const [editing, setEditing] = useState(null);
+  const [zoom, setZoom] = useState(1);
+  const [pinchStart, setPinchStart] = useState(null);
 
   function pt(e) {
     const r = svgRef.current.getBoundingClientRect();
@@ -45,8 +47,21 @@ function App() {
     return { x: ((cx-r.left)/r.width)*W, y: ((cy-r.top)/r.height)*H };
   }
 
+  function distanceTouches(e) {
+    if (!e.touches || e.touches.length < 2) return 0;
+    const a = e.touches[0];
+    const b = e.touches[1];
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
+
   function start(e, type, id) {
     e.preventDefault();
+
+    if (e.touches && e.touches.length === 2) {
+      setPinchStart({ distance: distanceTouches(e), zoom });
+      return;
+    }
+
     const p = pt(e);
     if (mode === "arrow") { setArrowStart(p); setTemp(p); return; }
     if (mode === "zone") { setZoneStart(p); setTemp(p); return; }
@@ -62,6 +77,16 @@ function App() {
 
   function move(e) {
     e.preventDefault();
+
+    if (e.touches && e.touches.length === 2 && pinchStart) {
+      const d = distanceTouches(e);
+      if (pinchStart.distance > 0) {
+        const nextZoom = Math.max(0.8, Math.min(1.6, pinchStart.zoom * (d / pinchStart.distance)));
+        setZoom(nextZoom);
+      }
+      return;
+    }
+
     const p = pt(e);
     if (mode === "arrow" && arrowStart) { setTemp(p); return; }
     if (mode === "zone" && zoneStart) { setTemp(p); return; }
@@ -89,7 +114,7 @@ function App() {
       const w=Math.abs(temp.x-zoneStart.x), h=Math.abs(temp.y-zoneStart.y);
       if (w>20 && h>20) setZones(old => [...old, {id:`z${Date.now()}`, x,y,w,h,color:"#FFD400"}]);
     }
-    setDrag(null); setArrowStart(null); setTemp(null); setZoneStart(null); setDrawing(null);
+    setDrag(null); setArrowStart(null); setTemp(null); setZoneStart(null); setDrawing(null); setPinchStart(null);
   }
 
   function applyFormation(name) {
@@ -158,6 +183,23 @@ function App() {
     setSelected("");
   }
 
+  function clearArrows() {
+    setArrows([]);
+    setStatus("Toutes les flèches ont été effacées");
+  }
+
+  function zoomIn() {
+    setZoom(z => Math.min(1.6, z + 0.1));
+  }
+
+  function zoomOut() {
+    setZoom(z => Math.max(0.8, z - 0.1));
+  }
+
+  function resetZoom() {
+    setZoom(1);
+  }
+
   function recordStep() {
     setSteps(old => [...old, { players: players.map(p=>({id:p.id,x:p.x,y:p.y})), ball:{...ball} }]);
     setStatus(`Étape enregistrée : ${steps.length+1}`);
@@ -224,6 +266,12 @@ function App() {
         <button onClick={redLine}>Adversaires en ligne</button>
         <button onClick={benchSubs}>Banc remplaçants</button>
         <button onClick={deleteSelected}>Effacer sélection</button>
+        <button onClick={clearArrows}>Effacer flèches</button>
+
+        <h2>ZOOM</h2>
+        <button onClick={zoomIn}>Zoom +</button>
+        <button onClick={zoomOut}>Zoom -</button>
+        <button onClick={resetZoom}>Zoom normal</button>
 
         <h2>ANIMATION</h2>
         <button onClick={recordStep}>+ Enregistrer étape</button>
@@ -236,7 +284,23 @@ function App() {
       </aside>
 
       <main className="field-wrap">
-        <svg ref={svgRef} className="field" viewBox={`0 0 ${W} ${H}`} onMouseMove={move} onMouseUp={stop} onMouseLeave={stop} onTouchMove={move} onTouchEnd={stop}>
+        <svg
+          ref={svgRef}
+          className="field"
+          style={{ transform: `scale(${zoom})` }}
+          viewBox={`0 0 ${W} ${H}`}
+          onMouseMove={move}
+          onMouseUp={stop}
+          onMouseLeave={stop}
+          onTouchStart={(e) => {
+            if (e.touches && e.touches.length === 2) {
+              e.preventDefault();
+              setPinchStart({ distance: distanceTouches(e), zoom });
+            }
+          }}
+          onTouchMove={move}
+          onTouchEnd={stop}
+        >
           <defs>
             <pattern id="grass" width="120" height="1" patternUnits="userSpaceOnUse">
               <rect width="60" height="1000" fill="#1f9d45" />
@@ -293,6 +357,7 @@ function App() {
         <h2>ÉTAT</h2>
         <div className="status">{status}</div>
         <div className="status small">Mode : {mode} | Étapes : {steps.length}</div>
+        <div className="status small">Zoom : {Math.round(zoom * 100)}%</div>
         <button onClick={()=>addPlayer("blue")}>+ Joueur bleu</button>
         <button onClick={()=>addPlayer("red")}>+ Joueur rouge</button>
         <button onClick={()=>addPlayer("sub")}>+ Remplaçant</button>
