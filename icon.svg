@@ -1,0 +1,16 @@
+{
+  "name": "Stratégie Soccer 7",
+  "short_name": "Soccer7",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
