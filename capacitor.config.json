@@ -1,0 +1,6 @@
+{
+  "appId": "com.soccer7.strategie",
+  "appName": "Stratégie Soccer 7",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

@@ -1,0 +1,15 @@
+{
+  "app_name": "Stratégie Soccer 7",
+  "version": "1.0.0",
+  "platform_target": [
+    "PWA",
+    "iPadOS",
+    "iOS"
+  ],
+  "recommended_bundle_id": "com.soccer7.strategie",
+  "recommended_category": "Sports",
+  "language": "fr-CA",
+  "description_short": "Application tactique pour préparer et expliquer des stratégies de soccer à 7.",
+  "current_storage": "localStorage",
+  "recommended_future_storage": "IndexedDB or SQLite for App Store version"
+}

@@ -1,17 +1,24 @@
 {
-  "name": "strategie-soccer7-pwa",
-  "version": "2.0.0",
+  "name": "soccer7-official",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "cap:add:ios": "npx cap add ios",
+    "cap:sync": "npx cap sync ios",
+    "cap:open:ios": "npx cap open ios"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "vite": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "@capacitor/core": "latest",
+    "@capacitor/ios": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
 }
